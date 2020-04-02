@@ -1,0 +1,8 @@
+{
+  "short_name": "Recognize Me",
+  "name": "Recognize Me: App of the future",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
