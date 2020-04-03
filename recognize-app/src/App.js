@@ -1,4 +1,5 @@
 import React from 'react';
+import Piano from './Piano';
 
 const App = () => {
   return (
@@ -6,6 +7,7 @@ const App = () => {
       <form method="POST" action="api/array">
         <input type="file" />
       </form>
+      <Piano />
     </div>
   );
 }
