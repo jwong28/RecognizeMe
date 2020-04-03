@@ -3,7 +3,9 @@ import React from 'react';
 const App = () => {
   return (
     <div>
-      <input type="file" />
+      <form method="POST" action="api/array">
+        <input type="file" />
+      </form>
     </div>
   );
 }
