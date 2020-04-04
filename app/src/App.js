@@ -4,9 +4,9 @@ import Piano from './Piano';
 const App = () => {
   return (
     <div>
-      <form method="POST" action="api/array">
+      {/* <form method="POST" action="api/array">
         <input type="file" />
-      </form>
+      </form> */}
       <Piano />
     </div>
   );

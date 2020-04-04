@@ -20,7 +20,7 @@ const Key = props => {
     const styling = {
         backgroundColor: color,
         height: '100px',
-        width: '5px',
+        width: '16px',
         display: 'inline-block',
         margin: '15px 1px 0px 1px',
     }
@@ -36,14 +36,13 @@ const Key = props => {
     const handleClick = () => {
         // For now, we'll make duration 1/4th of a note. Will change in future
         props.handleClick(color+position,'4n');
+        console.log('click');
     }
 
     return (
-        <>
-            <div onClick={e => handleClick()} style={styling}>
-                {note}
-            </div>
-        </>
+        <div onClick={e => handleClick()} style={styling}>
+            {note}
+        </div>
     );
 }
 export default Key;

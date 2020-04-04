@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Key from './Key';
 import * as Tone from 'tone';
 
@@ -11,10 +11,10 @@ const Piano = props => {
      *  36 black keys
      *  An octave of white keys start from C -> D -> E -> F -> G -> A -> B
      */
-    const keys = [];
+    const [keys,setKeys] = useState([]);
 
     // Synthesizer for making music
-    const synth = useRef();
+    const synth = new Tone.Synth().toMaster();
 
     // CSS Styling for piano container
     console.log('height',window.innerHeight);
@@ -22,22 +22,23 @@ const Piano = props => {
     const pianoStyle = {
         textAlign: 'center',
         height: `${window.innerHeight/2}px`,
-        width: `${window.innerWidth/2}px`,
+        width: `${window.innerWidth}px`,
+        backgroundColor: 'turquoise',
     }
 
     // Initializes everything before loading anything else
     useEffect(() => {
         // Creates a synth and connect it to the master output (your speakers)
-        synth.current = new Tone.Synth().toMaster();
+        // synth.current = new Tone.Synth().toMaster();
 
-        let char = 'C';
-        for(let i=0;i<7;i++){
-            setTimeout(() => {                
-                // Play middle C for a duration of an 8th note
-                synth.current.triggerAttackRelease(`${char}4`,"8n");
-                char = nextCharacter(char);
-            }, 1000 * i);
-        }
+        // let char = 'C';
+        // for(let i=0;i<7;i++){
+        //     setTimeout(() => {                
+        //         // Play middle C for a duration of an 8th note
+        //         synth.current.triggerAttackRelease(`${char}4`,"8n");
+        //         char = nextCharacter(char);
+            // }, 1000 * i);
+        // }
 
         initializeKeys();
     }, [])
@@ -63,9 +64,7 @@ const Piano = props => {
     // Plays the sound responsing to the according key input
     const playNote = (key,duration) => {
         // For now, will have half a second delay in between notes 
-        setTimeout(() => {
-            synth.current.triggerAttackRelease(key,duration);
-        }, 500);
+        synth.triggerAttackRelease(key,duration);
     }
 
     // Function to initialize keys
@@ -73,16 +72,23 @@ const Piano = props => {
         // The first key on the piano
         let char = 'A';
 
+        // Array to store the initial keys
+        let keyArr = [];
+
+        // Index just to satisfy reacts key property
+        let index = 0;
+
         // The 0th octave only has 3 keys, 2 white and 1 black in the middle
         for(let i=0;i<3;i++){
             let blackKey = i % 2 !== 0;
-            keys.push(
-                {
-                    color: blackKey ? 'black' : 'white',
-                    position: 0,
-                    note: blackKey ? `${char}#` : `${char}`,
-                    handleClick: playNote(),
-                }
+            keyArr.push(
+                <Key
+                    color={blackKey ? 'black' : 'white'}
+                    position={0}
+                    note={blackKey ? `${char}#` : `${char}`}
+                    key={index++}
+                    handleClick={(note,duration) => playNote(note,duration)}
+                />
             );
             char = blackKey ? char : nextCharacter(char);
         }
@@ -95,13 +101,14 @@ const Piano = props => {
             // First section
             for(let i=0;i<5;i++){
                 let blackKey = i % 2 !== 0;
-                keys.push(
-                    {
-                        color: blackKey ? 'black' : 'white',
-                        position: octave,
-                        note: blackKey ? `${char}#` : `${char}`,
-                        handleClick: playNote(),
-                    }
+                keyArr.push(
+                    <Key
+                        color={blackKey ? 'black' : 'white'}
+                        position={octave}
+                        note={blackKey ? `${char}#` : `${char}`}
+                        key={index++}
+                        handleClick={(note,duration) => playNote(note,duration)}
+                    />
                 );
                 char = blackKey ? char : nextCharacter(char);
             }
@@ -109,13 +116,14 @@ const Piano = props => {
             // Second section
             for(let i=0;i<7;i++){
                 let blackKey = i % 2 !== 0;
-                keys.push(
-                    {
-                        color: blackKey ? 'black' : 'white',
-                        position: octave,
-                        note: blackKey ? `${char}#` : `${char}`,
-                        handleClick: playNote(),
-                    }
+                keyArr.push(
+                    <Key
+                        color={blackKey ? 'black' : 'white'}
+                        position={octave}
+                        note={blackKey ? `${char}#` : `${char}`}
+                        key={index++}
+                        handleClick={(note,duration) => playNote(note,duration)}
+                    />
                 );
                 char = blackKey ? char : nextCharacter(char);
             }
@@ -123,28 +131,23 @@ const Piano = props => {
 
         // For the 8th octave, there is only 1 white note which is the C note
         char = nextCharacter(char);
-        keys.push(
-            {
-                color: 'white',
-                position: 8,
-                note: 'C',
-                handleClick: playNote(),
-            }
-        )
+        keyArr.push(
+            <Key
+                color={'white'}
+                position={8}
+                note={'C'}
+                key={index++}
+                handleClick={(note,duration) => playNote(note,duration)}
+            />
+        );
+
+        setKeys(keyArr);
     }
 
     return (
         <div style={pianoStyle}>
-            {console.log(keys)}
             <div className="keys-container">
-                {keys.map((obj,index) => (
-                    <Key 
-                        color={obj.color}
-                        position={obj.position}
-                        note={obj.note}
-                        handleClick={obj.handleClick}
-                    />
-                ))}
+                {keys}
             </div>
         </div>
     )
