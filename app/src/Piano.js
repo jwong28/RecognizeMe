@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Key from './Key';
 import * as Tone from 'tone';
 
@@ -14,19 +14,27 @@ const Piano = props => {
     const keys = [];
 
     // Synthesizer for making music
-    let synth;
+    const synth = useRef();
+
+    // CSS Styling for piano container
+    console.log('height',window.innerHeight);
+    console.log('width',window.innerWidth);
+    const pianoStyle = {
+        textAlign: 'center',
+        height: `${window.innerHeight/2}px`,
+        width: `${window.innerWidth/2}px`,
+    }
 
     // Initializes everything before loading anything else
     useEffect(() => {
         // Creates a synth and connect it to the master output (your speakers)
-        synth = new Tone.Synth().toMaster();
+        synth.current = new Tone.Synth().toMaster();
 
         let char = 'C';
-        console.log(char.charCodeAt());
         for(let i=0;i<7;i++){
             setTimeout(() => {                
                 // Play middle C for a duration of an 8th note
-                synth.triggerAttackRelease(`${char}4`,"8n");
+                synth.current.triggerAttackRelease(`${char}4`,"8n");
                 char = nextCharacter(char);
             }, 1000 * i);
         }
@@ -52,14 +60,92 @@ const Piano = props => {
         return String.fromCharCode(asciiDecimal + 1);
     }
 
+    // Plays the sound responsing to the according key input
+    const playNote = (key,duration) => {
+        // For now, will have half a second delay in between notes 
+        setTimeout(() => {
+            synth.current.triggerAttackRelease(key,duration);
+        }, 500);
+    }
+
     // Function to initialize keys
     const initializeKeys = () => {
+        // The first key on the piano
+        let char = 'A';
 
+        // The 0th octave only has 3 keys, 2 white and 1 black in the middle
+        for(let i=0;i<3;i++){
+            let blackKey = i % 2 !== 0;
+            keys.push(
+                {
+                    color: blackKey ? 'black' : 'white',
+                    position: 0,
+                    note: blackKey ? `${char}#` : `${char}`,
+                    handleClick: playNote(),
+                }
+            );
+            char = blackKey ? char : nextCharacter(char);
+        }
+
+        // The 1st through 7th octave has the same keys being repeated
+        for(let octave=1;octave<=7;octave++){
+            // Each octave has 3 white keys and 2 black keys alternating in the first section
+            // In the second section it has 4 white keys and 3 black keys alternating as well
+
+            // First section
+            for(let i=0;i<5;i++){
+                let blackKey = i % 2 !== 0;
+                keys.push(
+                    {
+                        color: blackKey ? 'black' : 'white',
+                        position: octave,
+                        note: blackKey ? `${char}#` : `${char}`,
+                        handleClick: playNote(),
+                    }
+                );
+                char = blackKey ? char : nextCharacter(char);
+            }
+
+            // Second section
+            for(let i=0;i<7;i++){
+                let blackKey = i % 2 !== 0;
+                keys.push(
+                    {
+                        color: blackKey ? 'black' : 'white',
+                        position: octave,
+                        note: blackKey ? `${char}#` : `${char}`,
+                        handleClick: playNote(),
+                    }
+                );
+                char = blackKey ? char : nextCharacter(char);
+            }
+        }
+
+        // For the 8th octave, there is only 1 white note which is the C note
+        char = nextCharacter(char);
+        keys.push(
+            {
+                color: 'white',
+                position: 8,
+                note: 'C',
+                handleClick: playNote(),
+            }
+        )
     }
 
     return (
-        <div>
-
+        <div style={pianoStyle}>
+            {console.log(keys)}
+            <div className="keys-container">
+                {keys.map((obj,index) => (
+                    <Key 
+                        color={obj.color}
+                        position={obj.position}
+                        note={obj.note}
+                        handleClick={obj.handleClick}
+                    />
+                ))}
+            </div>
         </div>
     )
 }
