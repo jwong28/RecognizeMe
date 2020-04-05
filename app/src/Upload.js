@@ -14,19 +14,27 @@ class Upload extends React.Component {
   handleUploadImage(ev) {
     ev.preventDefault();
 
+    let headers = new Headers();
+
+    // headers.append("Access-Control-Allow-Origin", "*");
+    // headers.append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
     const data = new FormData();
     data.append('file', this.uploadInput.files[0]);
     data.append('filename', this.fileName.value);
 
     fetch('http://localhost:5000/api/upload', {
       method: 'POST',
+      // mode: 'no-cors',
       body: data,
+      headers: headers,
     }).then((response) => {
       console.log(response)
       return response.json();
     })
     .then((data) => {
-      this.setState({responseMsg: data.data})
+      console.log(data);
+      this.setState({responseMsg: data.title})
     });
   }
 
