@@ -1,13 +1,12 @@
 import React from 'react';
-import Piano from './Piano';
+import Upload from './Upload'
+// import Piano from './Piano';
 
 const App = () => {
   return (
     <div>
-      {/* <form method="POST" action="api/array">
-        <input type="file" />
-      </form> */}
-      <Piano />
+      <Upload />
+      {/* <Piano /> */}
     </div>
   );
 }
