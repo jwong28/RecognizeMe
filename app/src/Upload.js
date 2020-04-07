@@ -1,18 +1,12 @@
-import React from 'react';
+import React, { useState, useRef} from 'react';
 
-class Upload extends React.Component {
-  constructor(props) {
-    super(props);
+const Upload = props => {
+  const [responseMsg,setResponseMsg] = useState('');
+  const uploadInput = useRef();
+  const fileName = useRef();
 
-    this.state = {
-      responseMsg: "",
-    };
-
-    this.handleUploadImage = this.handleUploadImage.bind(this);
-  }
-
-  handleUploadImage(ev) {
-    ev.preventDefault();
+  const handleUploadImage = event => {
+    event.preventDefault();
 
     let headers = new Headers();
 
@@ -20,8 +14,8 @@ class Upload extends React.Component {
     // headers.append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
     const data = new FormData();
-    data.append('file', this.uploadInput.files[0]);
-    data.append('filename', this.fileName.value);
+    data.append('file', uploadInput.current.files[0]);
+    data.append('filename', fileName.current.value);
 
     fetch('http://localhost:5000/api/upload', {
       method: 'POST',
@@ -34,27 +28,24 @@ class Upload extends React.Component {
     })
     .then((data) => {
       console.log(data);
-      this.setState({responseMsg: data.title})
+      setResponseMsg(data.title);
     });
   }
 
-  render() {
-    return (
-      <form onSubmit={this.handleUploadImage}>
-        <div>
-          <input ref={(ref) => { this.uploadInput = ref; }} type="file" />
-        </div>
-        <div>
-          <input ref={(ref) => { this.fileName = ref; }} type="text" placeholder="Name" />
-        </div>
-        <br />
-        <div>
-          <button>Upload</button>
-        </div>
-        <div> {this.state.responseMsg} </div>
-      </form>
-    );
-  }
+  return (
+    <form onSubmit={e => handleUploadImage(e)}>
+      <div>
+        <input ref={uploadInput} type="file" />
+      </div>
+      <div>
+        <input ref={fileName} type="text" placeholder="Name" />
+      </div>
+      <br />
+      <div>
+        <button>Upload</button>
+      </div>
+      <div> {responseMsg} </div>
+    </form>
+  );
 }
-
 export default Upload;
