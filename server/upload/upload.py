@@ -7,7 +7,7 @@ upload_blueprint = Blueprint('upload',__name__)
 def hello():
     return ("hello")
 
-@upload_blueprint.route('/api/upload')
+@upload_blueprint.route('/api/upload', methods = ['POST'])
 def upload():
     files = request.files['file']
     print(files, file = sys.stderr)
