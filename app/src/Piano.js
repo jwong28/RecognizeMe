@@ -13,12 +13,10 @@ const Piano = props => {
      */
     const [keys,setKeys] = useState([]);
 
-    // Synthesizer for making music
+    // Creates a synth and connect it to the master output (your speakers)
     const synth = new Tone.Synth().toMaster();
 
     // CSS Styling for piano container
-    console.log('height',window.innerHeight);
-    console.log('width',window.innerWidth);
     const pianoStyle = {
         textAlign: 'center',
         height: `${window.innerHeight/2}px`,
@@ -28,18 +26,6 @@ const Piano = props => {
 
     // Initializes everything before loading anything else
     useEffect(() => {
-        // Creates a synth and connect it to the master output (your speakers)
-        // synth.current = new Tone.Synth().toMaster();
-
-        // let char = 'C';
-        // for(let i=0;i<7;i++){
-        //     setTimeout(() => {                
-        //         // Play middle C for a duration of an 8th note
-        //         synth.current.triggerAttackRelease(`${char}4`,"8n");
-        //         char = nextCharacter(char);
-            // }, 1000 * i);
-        // }
-
         initializeKeys();
     }, [])
 
@@ -59,6 +45,24 @@ const Piano = props => {
 
         // Valid range after those checks so return next character
         return String.fromCharCode(asciiDecimal + 1);
+    }
+
+    // For this program, prev chararcter will only return uppercase characters in the range A-G
+    const prevCharacter = char => {
+        // Invalid character so just return G
+        if(char === undefined) return 'G';
+
+        // Represents the ascii table's decimal number
+        let asciiDecimal = char.charCodeAt();
+
+        // If character is A
+        if(asciiDecimal === 65) return 'G';
+
+        // Invalid range, range is not from B-G
+        if(asciiDecimal < 66 || asciiDecimal > 71) return 'G';
+
+        // Valid range after those checks so return prev character
+        return String.fromCharCode(asciiDecimal - 1);
     }
 
     // Plays the sound responsing to the according key input
@@ -85,7 +89,7 @@ const Piano = props => {
                 <Key
                     color={blackKey ? 'black' : 'white'}
                     position={0}
-                    note={blackKey ? `${char}#` : `${char}`}
+                    note={blackKey ? `${prevCharacter(char)}#` : `${char}`}
                     key={index++}
                     handleClick={(note,duration) => playNote(note,duration)}
                 />
@@ -105,7 +109,7 @@ const Piano = props => {
                     <Key
                         color={blackKey ? 'black' : 'white'}
                         position={octave}
-                        note={blackKey ? `${char}#` : `${char}`}
+                        note={blackKey ? `${prevCharacter(char)}#` : `${char}`}
                         key={index++}
                         handleClick={(note,duration) => playNote(note,duration)}
                     />
@@ -120,7 +124,7 @@ const Piano = props => {
                     <Key
                         color={blackKey ? 'black' : 'white'}
                         position={octave}
-                        note={blackKey ? `${char}#` : `${char}`}
+                        note={blackKey ? `${prevCharacter(char)}#` : `${char}`}
                         key={index++}
                         handleClick={(note,duration) => playNote(note,duration)}
                     />
@@ -145,10 +149,8 @@ const Piano = props => {
     }
 
     return (
-        <div style={pianoStyle}>
-            <div className="keys-container">
-                {keys}
-            </div>
+        <div style={pianoStyle} className="keys-container">
+            {keys}
         </div>
     )
 }

@@ -1,12 +1,12 @@
 import React from 'react';
 import Upload from './Upload'
-// import Piano from './Piano';
+import Piano from './Piano';
 
 const App = () => {
   return (
     <div>
       <Upload />
-      {/* <Piano /> */}
+      <Piano />
     </div>
   );
 }
